@@ -17,6 +17,18 @@ public final class FileInformation {
     this.lineStartOffsets = getLineStartOffsets(this.fileContent);
   }
 
+  public String getFileName() {
+    return fileName;
+  }
+
+  public String getFileContent() {
+    return fileContent;
+  }
+
+  public int[] getLineStartOffsets() {
+    return lineStartOffsets;
+  }
+
   public static FileInformation readFrom(Path path) throws IOException {
     String content = Files.readString(path, StandardCharsets.UTF_8);
 
@@ -57,4 +69,51 @@ public final class FileInformation {
     return Arrays.copyOf(offsets, count);
   }
 
+  public TextPosition getPosition(int offset) {
+    int lineIndex = getLineIndex(offset);
+    int lineStartOffset = lineStartOffsets[lineIndex - 1];
+    int columnNumber = offset - lineStartOffset + 1;
+
+    return new TextPosition(lineIndex, columnNumber);
+  }
+
+  public int getLineIndex(int offset) {
+    checkOffset(offset);
+
+    int searchedIndex = Arrays.binarySearch(lineStartOffsets, offset);
+
+    if (searchedIndex >= 0) {
+      return searchedIndex + 1;
+    }
+    int insertionIndex = -searchedIndex - 1;
+    int lineIndex = insertionIndex - 1;
+
+    return lineIndex + 1;
+  }
+
+  public String getLineContent(int lineIndex) {
+    checkLineIndex(lineIndex);
+
+    int startLineOffset = lineStartOffsets[lineIndex - 1];
+    boolean isLastLine = (lineIndex == lineStartOffsets.length);
+
+    int endLineIndex = isLastLine ? fileContent.length()
+            : lineStartOffsets[lineIndex] - 1;
+
+    return fileContent.substring(startLineOffset, endLineIndex);
+  }
+
+  private void checkOffset(int offset) {
+    if (offset < 0 || offset > fileContent.length()) {
+      throw new IndexOutOfBoundsException("offset " + offset + " is outside file "
+              + fileName + " (length " + fileContent.length() + ")");
+    }
+  }
+
+  private void checkLineIndex(int lineIndex) {
+    if (lineIndex < 1 || lineIndex > lineStartOffsets.length) {
+      throw new IndexOutOfBoundsException("no line " + lineIndex + " in file "
+              + fileName + " (line count " + lineStartOffsets.length + ")");
+    }
+  }
 }
