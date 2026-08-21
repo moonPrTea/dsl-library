@@ -1,0 +1,10 @@
+package moon.example.diagram;
+
+public enum ProblemCode {
+  UNKNOWN_CHARACTER,
+  UNTERMINATED_STRING,
+  UNKNOWN_ESCAPE,
+  UNTERMINATED_COMMENT,
+  MALFORMED_NUMBER,
+  LONE_COLON
+}

@@ -35,7 +35,7 @@ public final class FileInformation {
     return new FileInformation(path.getFileName().toString(), content);
   }
 
-  public String getTextRange(TextRange range) {
+  public String getRange(TextRange range) {
     return fileContent.substring(range.startIndex(), range.endIndex());
   }
 
