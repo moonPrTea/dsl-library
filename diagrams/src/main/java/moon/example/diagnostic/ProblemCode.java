@@ -1,4 +1,4 @@
-package moon.example.diagram;
+package moon.example.diagnostic;
 
 public enum ProblemCode {
   UNKNOWN_CHARACTER,
