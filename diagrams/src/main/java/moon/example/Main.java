@@ -1,9 +1,30 @@
 package moon.example;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import moon.example.common.FileInformation;
+import moon.example.common.TextRange;
+import moon.example.diagnostic.Problem;
+import moon.example.diagnostic.ProblemCode;
+import moon.example.diagnostic.ProblemCollector;
+
+import java.io.IOException;
+import java.nio.file.Path;
+
 public class Main {
-  public static void main(String[] args) {
-    System.out.println("diagram app");
+  public static void main(String[] args) throws IOException {
+    Path path = (args.length > 0) ? Path.of(args[0])
+            : Path.of("examples/example.bck");
+
+    FileInformation file = FileInformation.readFrom(path);
+    ProblemCollector problems = new ProblemCollector(file);
+
+    problems.add(Problem.error(ProblemCode.UNKNOWN_CHARACTER, new TextRange(1, 3),
+            "unknown character '@'"));
+
+    problems.add(Problem.error(ProblemCode.UNTERMINATED_STRING, new TextRange(4, 8),
+            "unterminated string literal: reached end of line",
+            "add a closing quote"));
+
+    System.err.print(problems.renderProblems());
+    System.exit(problems.hasAnyErrors() ? 1 : 0);
   }
 }

@@ -117,4 +117,34 @@ public final class ProblemCollector {
 
     result.append('\n');
   }
+
+  public String renderProblems() {
+    if (problems.isEmpty()) {
+      return "";
+    }
+
+    StringBuilder outputProblem = new StringBuilder();
+    for (Problem problem: getAllProblems()) {
+      combineAllDataForProblem(outputProblem, problem);
+    }
+
+    addSummary(outputProblem);
+
+    return outputProblem.toString();
+  }
+
+  private void addSummary(StringBuilder outputProblem) {
+    long countErrors = problems.stream()
+            .filter(problem -> problem.problemSeverity() == ProblemSeverity.ERROR)
+            .count();
+    long countWarnings = problems.size() - countErrors;
+
+    outputProblem.append("found: errors - ").append(countErrors)
+            .append(", exceptions - ").append(countWarnings);
+
+    if (limitReached) {
+      outputProblem.append(" (showed first ").append(PROBLEM_LIMIT).append(")");
+    }
+    outputProblem.append('\n');
+  }
 }

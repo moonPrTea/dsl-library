@@ -1,0 +1,5 @@
+BlockDiagram diagram = new BlockDiagram();
+diagram.setTitle("Login flow);
+
+Terminator start = new Terminator();
+start.setTitle("Begin");

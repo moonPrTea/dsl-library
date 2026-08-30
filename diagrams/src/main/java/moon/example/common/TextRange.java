@@ -5,8 +5,12 @@ public record TextRange(
         int endIndex
 ) {
   public TextRange {
-    if ((startIndex < 0) || (endIndex > startIndex)) {
-      throw new IllegalArgumentException("Incorrect indexes for text range");
+    if (startIndex < 0) {
+      throw new IllegalArgumentException("negative start index: " + startIndex);
+    }
+    if (endIndex < startIndex) {
+      throw new IllegalArgumentException(
+              "end index precedes start: " + startIndex + ".." + endIndex);
     }
   }
 
@@ -20,6 +24,6 @@ public record TextRange(
 
   public TextRange unionOf(TextRange otherRange) {
     return new TextRange(Math.min(this.startIndex, otherRange.startIndex()),
-            Math.min(this.endIndex, otherRange.endIndex));
+            Math.max(this.endIndex, otherRange.endIndex()));
   }
 }
