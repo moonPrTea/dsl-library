@@ -1,5 +1,22 @@
 BlockDiagram diagram = new BlockDiagram();
-diagram.setTitle("Login flow);
+diagram.setTitle("Login flow");
+diagram.setDescription(default::null);
 
 Terminator start = new Terminator();
 start.setTitle("Begin");
+
+Process read = new Process();
+read.setTitle("Read credentials");
+
+Decision check = new Decision();
+check.setTitle("Valid?");
+
+start.setNext(read);
+read.setNext(check);
+check.setYes(end);
+check.setNo(read);
+
+diagram.addBlock(start);
+diagram.addBlock(read);
+diagram.addBlock(check);
+diagram.setColor(Colors::new(255, 255, 255));
