@@ -23,7 +23,15 @@ public record Problem(
     return new Problem(ProblemSeverity.ERROR, code, textRange, message, hint);
   }
 
-  public static Problem exception(ProblemCode code, TextRange textRange, String message) {
-    return new Problem(ProblemSeverity.EXCEPTION, code, textRange, message, null);
+  public static Problem warning(ProblemCode code, TextRange textRange, String message) {
+    return new Problem(ProblemSeverity.WARNING, code, textRange, message, null);
+  }
+
+  public static Problem warning(ProblemCode code, TextRange textRange, String message, String hint) {
+    return new Problem(ProblemSeverity.WARNING, code, textRange, message, hint);
+  }
+
+  public boolean hasHint() {
+    return hint != null && !hint.isBlank();
   }
 }

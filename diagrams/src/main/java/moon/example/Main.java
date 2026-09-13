@@ -1,12 +1,15 @@
 package moon.example;
 
-import moon.example.ast.AstPrinter;
+import moon.example.analyzer.Analyzer;
 import moon.example.ast.Program;
 import moon.example.common.FileInformation;
 import moon.example.diagnostic.ProblemCollector;
 import moon.example.lexer.Lexer;
 import moon.example.lexer.Token;
+import moon.example.model.Diagram;
+import moon.example.model.ModelPrinter;
 import moon.example.parser.Parser;
+import moon.example.specification.SpecificationRegistry;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,7 +27,14 @@ public class Main {
 
     if (!problems.hasAnyErrors()) {
       Program program = new Parser(tokens, problems).parseProgram();
-      System.out.print(AstPrinter.print(program));
+
+      if (!problems.hasAnyErrors()) {
+        Diagram diagram = new Analyzer(new SpecificationRegistry(), problems).analyze(program);
+
+        if (diagram != null && !problems.hasAnyErrors()) {
+          System.out.print(ModelPrinter.print(diagram));
+        }
+      }
     }
 
     System.err.print(problems.renderProblems());

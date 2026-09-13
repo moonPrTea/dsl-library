@@ -19,7 +19,7 @@ public final class ProblemCollector {
   }
 
   public void add(Problem problem) {
-    if (problems.size() > PROBLEM_LIMIT) {
+    if (problems.size() >= PROBLEM_LIMIT) {
       limitReached = true;
       return;
     }
@@ -32,9 +32,9 @@ public final class ProblemCollector {
             .anyMatch(problem -> problem.problemSeverity() == ProblemSeverity.ERROR);
   }
 
-  public boolean hasAnyExceptions() {
+  public boolean hasAnyWarnings() {
     return problems.stream()
-            .anyMatch(problem -> problem.problemSeverity() == ProblemSeverity.EXCEPTION);
+            .anyMatch(problem -> problem.problemSeverity() == ProblemSeverity.WARNING);
   }
 
   public boolean isEmpty() {
@@ -115,6 +115,11 @@ public final class ProblemCollector {
             .append("^".repeat(caretLength))
             .append('\n');
 
+    if (problem.hasHint()) {
+      result.append(gutter).append(" |\n");
+      result.append(gutter).append(" = help: ").append(problem.hint()).append('\n');
+    }
+
     result.append('\n');
   }
 
@@ -140,7 +145,7 @@ public final class ProblemCollector {
     long countWarnings = problems.size() - countErrors;
 
     outputProblem.append("found: errors - ").append(countErrors)
-            .append(", exceptions - ").append(countWarnings);
+            .append(", warnings - ").append(countWarnings);
 
     if (limitReached) {
       outputProblem.append(" (showed first ").append(PROBLEM_LIMIT).append(")");

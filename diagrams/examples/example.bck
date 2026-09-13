@@ -11,6 +11,9 @@ read.setTitle("Read credentials");
 Decision check = new Decision();
 check.setTitle("Valid?");
 
+Terminator end = new Terminator();
+end.setTitle("End");
+
 start.setNext(read);
 read.setNext(check);
 check.setYes(end);
