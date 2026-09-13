@@ -164,6 +164,173 @@ public class LexerTest {
     assertEquals(ProblemCode.UNKNOWN_CHARACTER, problems.get(2).code());
   }
 
+  @Test
+  void testLexerShouldRecognizeIdentifier() {
+    Token identifierToken = tokenize("setTitle").get(0);
+
+    assertEquals(TokenType.IDENTIFIER, identifierToken.tokenType());
+    assertEquals("setTitle", identifierToken.text());
+  }
+
+  @Test
+  void testIdentifierShouldAllowDigitsAndUnderscoresAfterFirstCharacter() {
+    Token identifierToken = tokenize("_node_2").get(0);
+
+    assertEquals(TokenType.IDENTIFIER, identifierToken.tokenType());
+    assertEquals("_node_2", identifierToken.text());
+  }
+
+  @Test
+  void testLexerShouldRecognizeNewKeyword() {
+    assertTokenTypes("new",
+            TokenType.NEW,
+            TokenType.END_OF_FILE);
+  }
+
+  @Test
+  void testKeywordShouldNotBeTakenFromLongerIdentifier() {
+    assertTokenTypes("new newNode",
+            TokenType.NEW,
+            TokenType.IDENTIFIER,
+            TokenType.END_OF_FILE);
+  }
+
+  @Test
+  void testLexerShouldRecognizeNumber() {
+    Token numberToken = tokenize("255").get(0);
+
+    assertEquals(TokenType.NUMBER, numberToken.tokenType());
+    assertEquals("255", numberToken.text());
+  }
+
+  @Test
+  void testLexerShouldReportNumberFollowedByLetters() {
+    List<Problem> problems = collectProblems("123abc");
+
+    assertEquals(1, problems.size());
+    assertEquals(ProblemCode.MALFORMED_NUMBER, problems.get(0).code());
+  }
+
+  @Test
+  void testMalformedNumberShouldNotProduceTokens() {
+    assertTokenTypes("123abc ;",
+            TokenType.SEMICOLON,
+            TokenType.END_OF_FILE);
+  }
+
+  @Test
+  void testLexerShouldRecognizeString() {
+    Token stringToken = tokenize("\"Login flow\"").get(0);
+
+    assertEquals(TokenType.STRING, stringToken.tokenType());
+    assertEquals("Login flow", stringToken.text());
+  }
+
+  @Test
+  void testStringRangeShouldIncludeQuotes() {
+    Token stringToken = tokenize("\"abc\"").get(0);
+
+    assertEquals(0, stringToken.textRange().startIndex());
+    assertEquals(5, stringToken.textRange().endIndex());
+  }
+
+  @Test
+  void testLexerShouldRecognizeEmptyString() {
+    Token stringToken = tokenize("\"\"").get(0);
+
+    assertEquals(TokenType.STRING, stringToken.tokenType());
+    assertEquals("", stringToken.text());
+  }
+
+  @Test
+  void testLexerShouldDecodeEscapeSequences() {
+    Token stringToken = tokenize("\"a\\\"b\\\\c\\nd\\te\"").get(0);
+
+    assertEquals("a\"b\\c\nd\te", stringToken.text());
+  }
+
+  @Test
+  void testLexerShouldReportUnknownEscapeSequence() {
+    List<Problem> problems = collectProblems("\"bad \\q escape\"");
+
+    assertEquals(1, problems.size());
+    assertEquals(ProblemCode.UNKNOWN_ESCAPE, problems.get(0).code());
+  }
+
+  @Test
+  void testUnknownEscapeShouldNotBreakString() {
+    Token stringToken = tokenize("\"bad \\q escape\"").get(0);
+
+    assertEquals(TokenType.STRING, stringToken.tokenType());
+    assertEquals("bad q escape", stringToken.text());
+  }
+
+  @Test
+  void testLexerShouldReportStringUnterminatedAtEndOfLine() {
+    List<Problem> problems = collectProblems("\"not closed\n");
+
+    assertEquals(1, problems.size());
+    assertEquals(ProblemCode.UNTERMINATED_STRING, problems.get(0).code());
+  }
+
+  @Test
+  void testLexerShouldReportStringUnterminatedAtEndOfFile() {
+    List<Problem> problems = collectProblems("\"not closed");
+
+    assertEquals(1, problems.size());
+    assertEquals(ProblemCode.UNTERMINATED_STRING, problems.get(0).code());
+  }
+
+  @Test
+  void testUnterminatedStringShouldPointAtOpeningQuote() {
+    List<Problem> problems = collectProblems("x = \"not closed\ny = 1;");
+
+    assertEquals(4, problems.get(0).range().startIndex());
+  }
+
+  @Test
+  void testLexerShouldRecoverOnNextLineAfterUnterminatedString() {
+    assertTokenTypes("\"not closed\n;",
+            TokenType.SEMICOLON,
+            TokenType.END_OF_FILE);
+  }
+
+  @Test
+  void testLexerShouldTokenizeDeclarationStatement() {
+    assertTokenTypes("Terminator start = new Terminator();",
+            TokenType.IDENTIFIER,
+            TokenType.IDENTIFIER,
+            TokenType.EQUALS,
+            TokenType.NEW,
+            TokenType.IDENTIFIER,
+            TokenType.LEFT_PAREN,
+            TokenType.RIGHT_PAREN,
+            TokenType.SEMICOLON,
+            TokenType.END_OF_FILE);
+  }
+
+  @Test
+  void testLexerShouldTokenizeQualifiedCallWithArguments() {
+    assertTokenTypes("diagram.setColor(Colors::new(255, 0, 0));",
+            TokenType.IDENTIFIER,
+            TokenType.DOT,
+            TokenType.IDENTIFIER,
+            TokenType.LEFT_PAREN,
+            TokenType.IDENTIFIER,
+            TokenType.DOUBLE_COLON,
+            TokenType.NEW,
+            TokenType.LEFT_PAREN,
+            TokenType.NUMBER,
+            TokenType.COMMA,
+            TokenType.NUMBER,
+            TokenType.COMMA,
+            TokenType.NUMBER,
+            TokenType.RIGHT_PAREN,
+            TokenType.RIGHT_PAREN,
+            TokenType.SEMICOLON,
+            TokenType.END_OF_FILE);
+  }
+
   private List<Token> tokenize(String sourceText) {
     FileInformation fileInformation = new FileInformation("test.dgm", sourceText);
 

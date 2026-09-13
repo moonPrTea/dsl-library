@@ -152,9 +152,111 @@ public final class Lexer {
             "unknown character '" + shown + "'"));
   }
 
-  private void readIdentifier(int startPosition) { }
-  private void readNumber(int startPosition) { }
-  private void readString(int startPosition) { }
+  private void readIdentifier(int startPosition) {
+    while (checkIsIdentifierPart(peekChar())) {
+      position++;
+    }
+
+    String text = content.substring(startPosition, position);
+    TokenType tokenType = text.equals("new") ? TokenType.NEW : TokenType.IDENTIFIER;
+
+    addToken(tokenType, text, startPosition);
+  }
+
+  private void readNumber(int startPosition) {
+    while (checkIsDigit(peekChar())) {
+      position++;
+    }
+
+    if (checkIsIdentifierStart(peekChar())) {
+      while (checkIsIdentifierPart(peekChar())) {
+        position++;
+      }
+
+      String malformedText = content.substring(startPosition, position);
+
+      problemCollector.add(Problem.error(ProblemCode.MALFORMED_NUMBER, new TextRange(startPosition, position),
+              "malformed number literal '" + malformedText + "'",
+              "separate the number and the identifier"));
+      return;
+    }
+
+    addToken(TokenType.NUMBER, content.substring(startPosition, position), startPosition);
+  }
+
+  private void readString(int startPosition) {
+    StringBuilder value = new StringBuilder();
+
+    while (true) {
+      if (checkAtEnd()) {
+        reportUnterminatedString(startPosition, "reached end of file");
+        return;
+      }
+
+      char currentCharacter = peekChar();
+
+      if (currentCharacter == '\n') {
+        reportUnterminatedString(startPosition, "reached end of line");
+        return;
+      }
+
+      if (currentCharacter == '"') {
+        position++;
+        addToken(TokenType.STRING, value.toString(), startPosition);
+        return;
+      }
+
+      if (currentCharacter == '\\') {
+        readEscapeSequence(value);
+        continue;
+      }
+
+      value.append(currentCharacter);
+      position++;
+    }
+  }
+
+  private void readEscapeSequence(StringBuilder value) {
+    int escapeStartPosition = position;
+    position++;
+
+    char escapedCharacter = peekChar();
+
+    switch (escapedCharacter) {
+      case '"' -> {
+        value.append('"');
+        position++;
+      }
+      case '\\' -> {
+        value.append('\\');
+        position++;
+      }
+      case 'n' -> {
+        value.append('\n');
+        position++;
+      }
+      case 't' -> {
+        value.append('\t');
+        position++;
+      }
+      case '\n', END_OF_TEXT -> { }
+      default -> {
+        position++;
+
+        problemCollector.add(Problem.error(ProblemCode.UNKNOWN_ESCAPE, new TextRange(escapeStartPosition, position),
+                "unknown escape sequence '\\" + escapedCharacter + "'",
+                "supported sequences: \\\" \\\\ \\n \\t"));
+
+        value.append(escapedCharacter);
+      }
+    }
+  }
+
+  private void reportUnterminatedString(int startPosition, String detail) {
+    problemCollector.add(Problem.error(ProblemCode.UNTERMINATED_STRING, new TextRange(startPosition, startPosition + 1),
+            "unterminated string literal: " + detail,
+            "add a closing quote"));
+  }
 
   private static boolean checkIsDigit(char character) {
     return character >= '0' && character <= '9';
@@ -163,6 +265,10 @@ public final class Lexer {
   private static boolean checkIsIdentifierStart(char character) {
     return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z')
             || character == '_';
+  }
+
+  private static boolean checkIsIdentifierPart(char character) {
+    return checkIsIdentifierStart(character) || checkIsDigit(character);
   }
 
 }
