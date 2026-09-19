@@ -40,16 +40,16 @@ public final class SvgDiagramExporter {
     }
 
     for (Element element : scene.getElements()) {
-      svg.append("  ").append(render(element)).append('\n');
+      svg.append("  ").append(render(element, scene.getWidth(), scene.getHeight())).append('\n');
     }
 
     return svg.append("</svg>\n").toString();
   }
 
-  private String render(Element element) {
+  private String render(Element element, int canvasWidth, int canvasHeight) {
     return switch (element) {
       case LineGrid grid -> renderLineGrid(grid);
-      case DotGrid grid -> renderDotGrid(grid);
+      case DotGrid grid -> renderDotGrid(grid, canvasWidth, canvasHeight);
       case Rect rect -> "<rect x=\"" + number(rect.x()) + "\" y=\"" + number(rect.y())
               + "\" width=\"" + number(rect.width()) + "\" height=\"" + number(rect.height())
               + "\" rx=\"" + number(rect.radius()) + "\" fill=\"" + rect.fill()
@@ -113,15 +113,17 @@ public final class SvgDiagramExporter {
             + "  <rect width=\"100%\" height=\"100%\" fill=\"url(#" + GRID_PATTERN_ID + ")\"/>";
   }
 
-  private String renderDotGrid(DotGrid grid) {
-    String spacing = number(grid.spacing());
+  private String renderDotGrid(DotGrid grid, int canvasWidth, int canvasHeight) {
+    StringBuilder svg = new StringBuilder("<g fill=\"").append(grid.color()).append("\">");
 
-    return "<defs><pattern id=\"" + GRID_PATTERN_ID + "\" width=\"" + spacing
-            + "\" height=\"" + spacing + "\" patternUnits=\"userSpaceOnUse\">"
-            + "<circle cx=\"" + number(grid.radius()) + "\" cy=\"" + number(grid.radius())
-            + "\" r=\"" + number(grid.radius()) + "\" fill=\"" + grid.color() + "\"/>"
-            + "</pattern></defs>\n"
-            + "  <rect width=\"100%\" height=\"100%\" fill=\"url(#" + GRID_PATTERN_ID + ")\"/>";
+    for (double y = grid.radius(); y <= canvasHeight; y += grid.spacing()) {
+      for (double x = grid.radius(); x <= canvasWidth; x += grid.spacing()) {
+        svg.append("<circle cx=\"").append(number(x)).append("\" cy=\"").append(number(y))
+                .append("\" r=\"").append(number(grid.radius())).append("\"/>");
+      }
+    }
+
+    return svg.append("</g>").toString();
   }
 
   private String points(List<Point> points) {

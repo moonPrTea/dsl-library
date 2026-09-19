@@ -12,10 +12,12 @@ public record CommandLine(
         Path output,
         String selectedNode,
         boolean renderRequested,
+        boolean pngRequested,
         boolean helpRequested
 ) {
   private static final Path DEFAULT_INPUT = Path.of("examples/example.bck");
   private static final String SVG_EXTENSION = ".svg";
+  private static final String PNG_EXTENSION = ".png";
 
   public static CommandLine parse(String[] args) {
     Path input = null;
@@ -23,6 +25,7 @@ public record CommandLine(
     Path output = null;
     String selectedNode = null;
     boolean renderRequested = false;
+    boolean pngRequested = false;
     boolean helpRequested = false;
 
     for (int i = 0; i < args.length; i++) {
@@ -41,6 +44,10 @@ public record CommandLine(
           selectedNode = valueAfter(args, i++);
           renderRequested = true;
         }
+        case "--png" -> {
+          pngRequested = true;
+          renderRequested = true;
+        }
         case "--help", "-h" -> helpRequested = true;
         default -> {
           if (argument.startsWith("-")) {
@@ -57,7 +64,7 @@ public record CommandLine(
     }
 
     return new CommandLine(input != null ? input : DEFAULT_INPUT, theme, output, selectedNode,
-            renderRequested, helpRequested);
+            renderRequested, pngRequested, helpRequested);
   }
 
   public static String usage() {
@@ -66,6 +73,7 @@ public record CommandLine(
               --theme %s   rendering theme (default: %s)
               --output, -o PATH        output SVG file (default: <input>-<theme>.svg next to the input)
               --selected NODE          render one node as selected
+              --png                    also export a PNG next to the SVG
               --help, -h               show this help
 
             Without rendering options the command prints the analyzed model.
@@ -84,6 +92,11 @@ public record CommandLine(
     return output.toString().toLowerCase(Locale.ROOT).endsWith(SVG_EXTENSION)
             ? output
             : Path.of(output + SVG_EXTENSION);
+  }
+
+  public Path pngOutputPath() {
+    String svgPath = outputPath().toString();
+    return Path.of(svgPath.substring(0, svgPath.length() - SVG_EXTENSION.length()) + PNG_EXTENSION);
   }
 
   private static DiagramTheme expectTheme(String name) {

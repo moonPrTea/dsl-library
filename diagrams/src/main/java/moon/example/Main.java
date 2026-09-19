@@ -10,16 +10,16 @@ import moon.example.model.Diagram;
 import moon.example.model.ModelPrinter;
 import moon.example.parser.Parser;
 import moon.example.render.DiagramRenderer;
+import moon.example.render.PictureConverter;
 import moon.example.render.RenderScene;
 import moon.example.render.SvgDiagramExporter;
 import moon.example.specification.SpecificationRegistry;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
 public class Main {
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws Exception {
     CommandLine commandLine;
 
     try {
@@ -61,12 +61,18 @@ public class Main {
     System.exit(problems.hasAnyErrors() ? 1 : 0);
   }
 
-  private static void render(Diagram diagram, CommandLine commandLine) throws IOException {
+  private static void render(Diagram diagram, CommandLine commandLine) throws Exception {
     RenderScene scene = new DiagramRenderer()
             .render(diagram, commandLine.theme(), commandLine.selectedNode());
     Path output = commandLine.outputPath();
 
     new SvgDiagramExporter().write(scene, output);
     System.out.println("Rendered " + commandLine.theme().name() + " diagram: " + output);
+
+    if (commandLine.pngRequested()) {
+      Path pngOutput = commandLine.pngOutputPath();
+      PictureConverter.convert(output, pngOutput);
+      System.out.println("Rendered " + commandLine.theme().name() + " diagram: " + pngOutput);
+    }
   }
 }

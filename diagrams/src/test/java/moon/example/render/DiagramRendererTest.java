@@ -37,7 +37,7 @@ public class DiagramRendererTest {
     String svg = new SvgDiagramExporter().export(scene);
 
     assertTrue(svg.contains("data-theme=\"custom\""));
-    assertTrue(svg.contains("<pattern id=\"grid\""));
+    assertTrue(svg.contains("<circle cx="), "dot grid must be drawn as plain circles");
     assertTrue(svg.contains(" C "), "connectors must curve when they branch");
     assertTrue(svg.contains(">Default</text>"), "category pills use a plain default caption");
     assertTrue(svg.contains(">yes</text>"), "relation names label the branch pills");
