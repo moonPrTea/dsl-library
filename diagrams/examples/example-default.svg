@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="802" viewBox="0 0 800 802" data-theme="default">
+  <rect width="100%" height="100%" fill="#FFFFFF"/>
+  <text x="400" y="35" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="20" text-anchor="middle" font-weight="600">Login flow</text>
+  <polyline points="400,170 400,276" fill="none" stroke="#111111" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="butt"/>
+  <polygon points="400,276 395.5,267 404.5,267" fill="#111111" stroke="#111111" stroke-width="1" stroke-linejoin="round"/>
+  <rect x="383.68" y="212" width="32.64" height="18" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+  <text x="400" y="226" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" text-anchor="middle">Next</text>
+  <polyline points="400,354 400,460" fill="none" stroke="#111111" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="butt"/>
+  <polygon points="400,460 395.5,451 404.5,451" fill="#111111" stroke="#111111" stroke-width="1" stroke-linejoin="round"/>
+  <rect x="383.68" y="396" width="32.64" height="18" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+  <text x="400" y="410" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" text-anchor="middle">Next</text>
+  <polyline points="400,538 400,591 262,591 262,644" fill="none" stroke="#111111" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="butt"/>
+  <polygon points="262,644 257.5,635 266.5,635" fill="#111111" stroke="#111111" stroke-width="1" stroke-linejoin="round"/>
+  <rect x="317.76" y="580" width="26.48" height="18" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+  <text x="331" y="594" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" text-anchor="middle">Yes</text>
+  <polyline points="400,538 400,591 538,591 538,644" fill="none" stroke="#111111" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="butt"/>
+  <polygon points="538,644 533.5,635 542.5,635" fill="#111111" stroke="#111111" stroke-width="1" stroke-linejoin="round"/>
+  <rect x="458.84" y="580" width="20.32" height="18" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+  <text x="469" y="594" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" text-anchor="middle">No</text>
+  <rect x="305" y="92" width="190" height="78" rx="18" fill="#F2F2F2" stroke="#333333" stroke-width="1.3"/>
+  <text x="400" y="135.76" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle">Open login page</text>
+  <rect x="305" y="276" width="190" height="78" rx="0" fill="#F2F2F2" stroke="#333333" stroke-width="1.3"/>
+  <text x="400" y="311.01" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle">Write username and</text>
+  <text x="400" y="328.51" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle">password</text>
+  <polygon points="400,460 495,499 400,538 305,499" fill="#F2F2F2" stroke="#333333" stroke-width="1.3" stroke-linejoin="round"/>
+  <text x="400" y="503.76" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle">Right credentials?</text>
+  <rect x="167" y="644" width="190" height="78" rx="0" fill="#F2F2F2" stroke="#333333" stroke-width="1.3"/>
+  <text x="262" y="679.01" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle">Successful</text>
+  <text x="262" y="696.51" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle">operation</text>
+  <rect x="443" y="644" width="190" height="78" rx="0" fill="#F2F2F2" stroke="#333333" stroke-width="1.3"/>
+  <text x="538" y="679.01" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle">Cancel the</text>
+  <text x="538" y="696.51" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle">operation</text>
+</svg>

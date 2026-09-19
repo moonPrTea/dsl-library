@@ -3,23 +3,28 @@ diagram.setTitle("Login flow");
 diagram.setDescription(default::null);
 
 Terminator start = new Terminator();
-start.setTitle("Begin");
+start.setTitle("Open login page");
 
-Process read = new Process();
-read.setTitle("Read credentials");
+Process capture = new Process();
+capture.setTitle("Write username and password");
 
 Decision check = new Decision();
-check.setTitle("Valid?");
+check.setTitle("Right credentials?");
 
-Terminator end = new Terminator();
-end.setTitle("End");
+Process cancelAction = new Process();
+cancelAction.setTitle("Successful operation");
 
-start.setNext(read);
-read.setNext(check);
-check.setYes(end);
-check.setNo(read);
+Process thirdPartAction = new Process();
+thirdPartAction.setTitle("Cancel the operation");
+
+start.setNext(capture);
+capture.setNext(check);
+check.setYes(cancelAction);
+check.setNo(thirdPartAction);
 
 diagram.addBlock(start);
-diagram.addBlock(read);
+diagram.addBlock(capture);
 diagram.addBlock(check);
+diagram.addBlock(cancelAction);
+diagram.addBlock(thirdPartAction);
 diagram.setColor(Colors::new(255, 255, 255));
