@@ -17,6 +17,7 @@ public final class Lexer {
 
   private final List<Token> allTokens = new ArrayList<>();
   private int position = 0;
+  private boolean nextTokenStartsNewLine = false;
 
   public Lexer(FileInformation fileInformation, ProblemCollector problemCollector) {
     this.content = fileInformation.getFileContent();
@@ -52,12 +53,13 @@ public final class Lexer {
   }
 
   private void addToken(TokenType type, String text, int startPosition) {
-    allTokens.add(new Token(type, text, new TextRange(startPosition, position)));
+    allTokens.add(new Token(type, text, new TextRange(startPosition, position),
+            nextTokenStartsNewLine));
   }
 
   public List<Token> tokenizeFile() {
     while (true) {
-      skipSpecialSpacesAndComments();
+      nextTokenStartsNewLine = skipSpecialSpacesAndComments();
 
       if (checkAtEnd()) {
         break;
@@ -88,25 +90,31 @@ public final class Lexer {
       }
     }
 
-    allTokens.add(new Token(TokenType.END_OF_FILE, "", new TextRange(position, position)));
+    allTokens.add(new Token(TokenType.END_OF_FILE, "", new TextRange(position, position),
+            nextTokenStartsNewLine));
 
     return allTokens;
   }
 
-  public void skipSpecialSpacesAndComments() {
+  public boolean skipSpecialSpacesAndComments() {
+    boolean sawNewLine = false;
+
     while(!checkAtEnd()) {
       char currentCharacter = peekChar();
 
       if (currentCharacter == ' ' || currentCharacter == '\t' || currentCharacter == '\n') {
+        sawNewLine |= currentCharacter == '\n';
         position++;
       } else if (currentCharacter == '/' && peekAhead(1) == '/') {
         skipLineComment();
       } else if (currentCharacter == '/' && peekAhead(1) == '*') {
         skipBlockComment();
       } else {
-        return;
+        return sawNewLine;
       }
     }
+
+    return sawNewLine;
   }
 
   private void skipLineComment() {

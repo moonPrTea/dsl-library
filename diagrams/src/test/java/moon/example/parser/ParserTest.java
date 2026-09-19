@@ -163,6 +163,19 @@ public class ParserTest {
   }
 
   @Test
+  void testUnfinishedCallShouldNotSwallowTheNextStatement() {
+    List<Problem> problems = collectProblems("""
+            Process.
+
+            start.setNext(capture);
+            """);
+
+    assertEquals(1, problems.size());
+    assertEquals(ProblemCode.EXPECTED_TOKEN, problems.get(0).code());
+    assertEquals(7, problems.get(0).range().startIndex(), "must point at the '.' on line 1");
+  }
+
+  @Test
   void testMissingSemicolonShouldPointAtNextToken() {
     List<Problem> problems = collectProblems("a.b() c.d();");
 

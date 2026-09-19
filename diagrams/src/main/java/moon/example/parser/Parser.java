@@ -67,13 +67,13 @@ public final class Parser {
 
   private Declaration parseDeclaration() {
     Token typeName = expect(TokenType.IDENTIFIER, "type name");
-    Token variableName = expect(TokenType.IDENTIFIER, "variable name");
-    expect(TokenType.EQUALS, "'='");
-    expect(TokenType.NEW, "'new'");
-    Token constructorTypeName = expect(TokenType.IDENTIFIER, "type name");
-    expect(TokenType.LEFT_PAREN, "'('");
-    expect(TokenType.RIGHT_PAREN, "')'");
-    Token semicolon = expect(TokenType.SEMICOLON, "';'");
+    Token variableName = expectSameLine(TokenType.IDENTIFIER, "variable name");
+    expectSameLine(TokenType.EQUALS, "'='");
+    expectSameLine(TokenType.NEW, "'new'");
+    Token constructorTypeName = expectSameLine(TokenType.IDENTIFIER, "type name");
+    expectSameLine(TokenType.LEFT_PAREN, "'('");
+    expectSameLine(TokenType.RIGHT_PAREN, "')'");
+    Token semicolon = expectSameLine(TokenType.SEMICOLON, "';'");
 
     return new Declaration(
             typeName.text(), typeName.textRange(),
@@ -84,12 +84,12 @@ public final class Parser {
 
   private Call parseCall() {
     Token receiverName = expect(TokenType.IDENTIFIER, "receiver name");
-    expect(TokenType.DOT, "'.'");
-    Token methodName = expect(TokenType.IDENTIFIER, "method name");
-    expect(TokenType.LEFT_PAREN, "'('");
+    expectSameLine(TokenType.DOT, "'.'");
+    Token methodName = expectSameLine(TokenType.IDENTIFIER, "method name");
+    expectSameLine(TokenType.LEFT_PAREN, "'('");
     List<Argument> arguments = parseArgumentsUntilRightParen();
-    expect(TokenType.RIGHT_PAREN, "')'");
-    Token semicolon = expect(TokenType.SEMICOLON, "';'");
+    expectSameLine(TokenType.RIGHT_PAREN, "')'");
+    Token semicolon = expectSameLine(TokenType.SEMICOLON, "';'");
 
     return new Call(
             receiverName.text(), receiverName.textRange(),
@@ -193,6 +193,25 @@ public final class Parser {
             "expected " + description + " but found " + describe(token));
   }
 
+  private Token expectSameLine(TokenType expectedType, String description) {
+    Token token = peekToken();
+
+    if (token.isOfType(expectedType) && !token.startsNewLine()) {
+      return advance();
+    }
+
+    if (token.startsNewLine()) {
+      Token previous = previousToken();
+
+      throw reportProblem(ProblemCode.EXPECTED_TOKEN, previous.textRange(),
+              "expected " + description + " but the statement ended after '"
+                      + previous.text() + "'");
+    }
+
+    throw reportProblem(ProblemCode.EXPECTED_TOKEN, token,
+            "expected " + description + " but found " + describe(token));
+  }
+
   private ParseException reportUnexpectedStatementStart() {
     Token token = peekToken();
 
@@ -202,7 +221,11 @@ public final class Parser {
   }
 
   private ParseException reportProblem(ProblemCode code, Token token, String message) {
-    problemCollector.add(Problem.error(code, token.textRange(), message));
+    return reportProblem(code, token.textRange(), message);
+  }
+
+  private ParseException reportProblem(ProblemCode code, TextRange range, String message) {
+    problemCollector.add(Problem.error(code, range, message));
 
     return new ParseException();
   }
@@ -229,6 +252,10 @@ public final class Parser {
 
   private Token peekToken() {
     return tokens.get(position);
+  }
+
+  private Token previousToken() {
+    return tokens.get(position - 1);
   }
 
   private Token peekAhead(int offset) {

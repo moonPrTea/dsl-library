@@ -5,7 +5,8 @@ import moon.example.common.TextRange;
 public record Token(
      TokenType tokenType,
      String text,
-     TextRange textRange
+     TextRange textRange,
+     boolean startsNewLine
 ) {
   public boolean isOfType(TokenType expectedType) {
     return this.tokenType == expectedType;

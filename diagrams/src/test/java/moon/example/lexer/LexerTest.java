@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -329,6 +330,26 @@ public class LexerTest {
             TokenType.RIGHT_PAREN,
             TokenType.SEMICOLON,
             TokenType.END_OF_FILE);
+  }
+
+  @Test
+  void testLexerShouldMarkTokensThatStartANewLine() {
+    List<Token> tokens = tokenize("a.b()\n.c()");
+
+    assertFalse(tokens.get(0).startsNewLine(), "identifier 'a' opens the file");
+    assertFalse(tokens.get(1).startsNewLine(), "'.' right after 'a'");
+    assertTrue(tokens.get(5).startsNewLine(), "'.' after the line break");
+  }
+
+  @Test
+  void testLexerShouldNotMarkTokensOnTheSameLine() {
+    List<Token> tokens = tokenize("a . b ( )");
+
+    for (Token token : tokens) {
+      if (!token.isOfType(TokenType.END_OF_FILE)) {
+        assertFalse(token.startsNewLine(), "tokens: " + tokens);
+      }
+    }
   }
 
   private List<Token> tokenize(String sourceText) {
