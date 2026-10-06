@@ -1,5 +1,7 @@
 package moon.example.render;
 
+import java.util.Locale;
+
 public enum NodeCategory {
   LAUNCH(LucideIcon.ZAP, "#EDE9FE", "#6D5FC4"),
   FINISH(LucideIcon.CIRCLE_X, "#FEE2E2", "#C2483F"),
@@ -26,5 +28,17 @@ public enum NodeCategory {
 
   public String foreground() {
     return foreground;
+  }
+
+  public static NodeCategory find(String name) {
+    if (name == null || name.isBlank()) {
+      return null;
+    }
+
+    try {
+      return NodeCategory.valueOf(name.trim().toUpperCase(Locale.ROOT));
+    } catch (IllegalArgumentException exception) {
+      return null;
+    }
   }
 }

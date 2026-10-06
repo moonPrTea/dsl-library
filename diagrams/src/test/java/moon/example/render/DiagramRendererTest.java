@@ -80,6 +80,32 @@ public class DiagramRendererTest {
     assertEquals(null, DiagramThemes.find("neon"));
   }
 
+  @Test
+  void testNodeCategoriesAndIconsShouldBeFoundByNameIgnoringCase() {
+    assertEquals(NodeCategory.CONDITION, NodeCategory.find("condition"));
+    assertEquals(null, NodeCategory.find("nonsense"));
+    assertEquals(LucideIcon.ZAP, LucideIcon.find("Zap"));
+    assertEquals(null, LucideIcon.find("nonsense"));
+  }
+
+  @Test
+  void testCustomThemeShouldUseExplicitBadgeOverrides() {
+    Diagram diagram = diagram();
+    DiagramNode check = diagram.getNodes().get(2);
+    check.setBadgeLabel("Retry");
+    check.setBadgeIcon("question_mark");
+    check.setBadgeCategory("action");
+
+    RenderScene scene = new DiagramRenderer().render(diagram, DiagramThemes.CUSTOM, "check");
+    String svg = new SvgDiagramExporter().export(scene);
+
+    assertTrue(svg.contains(">Retry</text>"), "an explicit badge label must replace the default");
+    assertTrue(svg.contains(LucideIcon.QUESTION_MARK.elements().get(0)),
+            "an explicit badge icon must replace the shape-derived one");
+    assertTrue(svg.contains(NodeCategory.ACTION.background()),
+            "an explicit badge category must replace the shape-derived one");
+  }
+
   private static Diagram diagram() {
     TextRange range = new TextRange(0, 0);
     DiagramSpecification specification = new BlockDiagramSpecification();

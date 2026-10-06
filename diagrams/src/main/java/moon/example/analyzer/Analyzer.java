@@ -256,15 +256,7 @@ public final class Analyzer {
     NodeType nodeType = node.getNodeType();
 
     if (nodeType.hasProperty(method)) {
-      if (!expectArgumentCount(call, 1)) {
-        return;
-      }
-
-      String value = expectString(call.arguments().get(0), nodeType.getPropertyType(method));
-
-      if (value != null) {
-        node.setTitle(value);
-      }
+      applyNodeProperty(call, node, nodeType.getPropertyType(method));
       return;
     }
 
@@ -286,6 +278,42 @@ public final class Analyzer {
     List<String> knownMethods = new ArrayList<>(nodeType.properties().keySet());
     knownMethods.addAll(specification.getRelationSugarMethodNames());
     reportUnknownMethod(call, "type '" + nodeType.name() + "'", knownMethods);
+  }
+
+  private void applyNodeProperty(Call call, DiagramNode node, PropertyType propertyType) {
+    if (!expectArgumentCount(call, 1)) {
+      return;
+    }
+
+    Argument argument = call.arguments().get(0);
+
+    switch (call.methodName()) {
+      case "setTitle" -> {
+        String value = expectString(argument, propertyType);
+        if (value != null) {
+          node.setTitle(value);
+        }
+      }
+      case "setBadgeLabel" -> {
+        String value = expectString(argument, propertyType);
+        if (value != null) {
+          node.setBadgeLabel(value);
+        }
+      }
+      case "setBadgeIcon" -> {
+        String value = expectString(argument, propertyType);
+        if (value != null) {
+          node.setBadgeIcon(value);
+        }
+      }
+      case "setBadgeCategory" -> {
+        String value = expectString(argument, propertyType);
+        if (value != null) {
+          node.setBadgeCategory(value);
+        }
+      }
+      default -> throw new IllegalStateException("unhandled node property " + call.methodName());
+    }
   }
 
   private void processRelationCall(Call call, PendingRelation relation) {

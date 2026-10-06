@@ -8,6 +8,7 @@ import moon.example.diagnostic.ProblemSeverity;
 import moon.example.lexer.Lexer;
 import moon.example.model.Color;
 import moon.example.model.Diagram;
+import moon.example.model.DiagramNode;
 import moon.example.parser.Parser;
 import moon.example.specification.SpecificationRegistry;
 import org.junit.jupiter.api.Test;
@@ -71,6 +72,22 @@ public class AnalyzerTest {
             """);
 
     assertEquals("Begin", diagram.getNodes().get(0).getTitle());
+  }
+
+  @Test
+  void testAnalyzerShouldApplyNodeBadgeProperties() {
+    Diagram diagram = analyze(DIAGRAM + """
+            Process start = new Process();
+            start.setBadgeLabel("Sync");
+            start.setBadgeIcon("zap");
+            start.setBadgeCategory("launch");
+            diagram.addBlock(start);
+            """);
+
+    DiagramNode node = diagram.getNodes().get(0);
+    assertEquals("Sync", node.getBadgeLabel());
+    assertEquals("zap", node.getBadgeIcon());
+    assertEquals("launch", node.getBadgeCategory());
   }
 
   @Test
@@ -178,7 +195,8 @@ public class AnalyzerTest {
             a.explode(a);
             """).get(0);
 
-    assertEquals("available methods: setTitle, setNext, setYes, setNo", problem.hint());
+    assertEquals("available methods: setTitle, setBadgeLabel, setBadgeIcon, setBadgeCategory, "
+            + "setNext, setYes, setNo", problem.hint());
   }
 
   @Test

@@ -1,6 +1,7 @@
 package moon.example.render;
 
 import java.util.List;
+import java.util.Locale;
 
 public enum LucideIcon {
   ZAP("<path d=\"M13 2 3 14h9l-1 8 10-12h-9z\"/>"),
@@ -24,5 +25,17 @@ public enum LucideIcon {
 
   public List<String> elements() {
     return elements;
+  }
+
+  public static LucideIcon find(String name) {
+    if (name == null || name.isBlank()) {
+      return null;
+    }
+
+    try {
+      return LucideIcon.valueOf(name.trim().toUpperCase(Locale.ROOT));
+    } catch (IllegalArgumentException exception) {
+      return null;
+    }
   }
 }

@@ -4,6 +4,9 @@ diagram.setDescription(default::null);
 
 Terminator start = new Terminator();
 start.setTitle("Open login page");
+start.setBadgeLabel("Trigger");
+start.setBadgeIcon("zap");
+start.setBadgeCategory("launch");
 
 Process capture = new Process();
 capture.setTitle("Write username and password");
@@ -13,6 +16,9 @@ check.setTitle("Right credentials?");
 
 Process cancelAction = new Process();
 cancelAction.setTitle("Successful operation");
+cancelAction.setBadgeLabel("Done");
+cancelAction.setBadgeIcon("circle_x");
+cancelAction.setBadgeCategory("finish");
 
 Process thirdPartAction = new Process();
 thirdPartAction.setTitle("Cancel the operation");

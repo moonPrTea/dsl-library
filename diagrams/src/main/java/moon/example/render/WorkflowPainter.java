@@ -59,7 +59,8 @@ public final class WorkflowPainter implements DiagramPainter {
             .mapToDouble(line -> TextLayout.estimateWidth(line, CARD_FONT_SIZE))
             .max().orElse(0);
     double width = Math.max(metrics.nodeWidth(), textWidth + CARD_HORIZONTAL_PADDING * 2);
-    double badgeWidth = categoryBadgeWidth() + PILL_SIDE_MARGIN * 2;
+    String label = node.getBadgeLabel().isBlank() ? DEFAULT_BADGE_LABEL : node.getBadgeLabel();
+    double badgeWidth = categoryBadgeWidth(label) + PILL_SIDE_MARGIN * 2;
     width = Math.max(width, badgeWidth);
     double cardHeight = lines.size() * CARD_LINE_HEIGHT + CARD_VERTICAL_PADDING * 2;
 
@@ -105,7 +106,13 @@ public final class WorkflowPainter implements DiagramPainter {
               lines.get(i), CARD_FONT_SIZE, colors.text(), TextAnchor.MIDDLE, true));
     }
 
-    paintCategoryBadge(scene, box.centerX(), box.y() + PILL_HEIGHT / 2, category);
+    String label = node.getBadgeLabel().isBlank() ? DEFAULT_BADGE_LABEL : node.getBadgeLabel();
+    LucideIcon icon = LucideIcon.find(node.getBadgeIcon());
+    if (icon == null) {
+      icon = category.icon();
+    }
+
+    paintCategoryBadge(scene, box.centerX(), box.y() + PILL_HEIGHT / 2, category, label, icon);
   }
 
   @Override
@@ -204,24 +211,24 @@ public final class WorkflowPainter implements DiagramPainter {
   }
 
   private void paintCategoryBadge(RenderScene scene, double centerX, double centerY,
-                                  NodeCategory category) {
-    double width = categoryBadgeWidth();
+                                  NodeCategory category, String label, LucideIcon icon) {
+    double width = categoryBadgeWidth(label);
     double left = centerX - width / 2;
 
     scene.add(new Rect(left, centerY - PILL_HEIGHT / 2, width, PILL_HEIGHT, PILL_HEIGHT / 2,
             category.background(), "none", 0));
 
     double iconX = left + PILL_HORIZONTAL_PADDING;
-    scene.add(new Icon(iconX, centerY - PILL_ICON_SIZE / 2, PILL_ICON_SIZE, category.icon(),
+    scene.add(new Icon(iconX, centerY - PILL_ICON_SIZE / 2, PILL_ICON_SIZE, icon,
             category.foreground()));
 
     double textX = iconX + PILL_ICON_SIZE + PILL_ICON_GAP;
-    scene.add(new Text(textX, centerY + 4, DEFAULT_BADGE_LABEL, PILL_FONT_SIZE,
+    scene.add(new Text(textX, centerY + 4, label, PILL_FONT_SIZE,
             category.foreground(), TextAnchor.START, true));
   }
 
-  private double categoryBadgeWidth() {
-    return PILL_ICON_SIZE + PILL_ICON_GAP + TextLayout.estimateWidth(DEFAULT_BADGE_LABEL, PILL_FONT_SIZE)
+  private double categoryBadgeWidth(String label) {
+    return PILL_ICON_SIZE + PILL_ICON_GAP + TextLayout.estimateWidth(label, PILL_FONT_SIZE)
             + PILL_HORIZONTAL_PADDING * 2;
   }
 
@@ -245,6 +252,12 @@ public final class WorkflowPainter implements DiagramPainter {
   }
 
   private NodeCategory categoryOf(DiagramNode node) {
+    NodeCategory override = NodeCategory.find(node.getBadgeCategory());
+
+    if (override != null) {
+      return override;
+    }
+
     return switch (node.getNodeType().shape()) {
       case DIAMOND -> NodeCategory.CONDITION;
       case RECTANGLE -> NodeCategory.ACTION;
