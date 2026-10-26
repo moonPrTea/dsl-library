@@ -26,6 +26,7 @@ public final class WorkflowPainter implements DiagramPainter {
   private static final double CARD_HORIZONTAL_PADDING = PILL_HORIZONTAL_PADDING;
   private static final double CARD_MAX_TEXT_WIDTH = 340;
 
+  private static final String TITLE_COLOR = "#FFFFFF";
   private static final double TITLE_FONT = 15;
   private static final double DESCRIPTION_FONT = 12;
 
@@ -70,7 +71,7 @@ public final class WorkflowPainter implements DiagramPainter {
   @Override
   public void paintHeading(RenderScene scene, String title, String description) {
     if (!title.isBlank()) {
-      scene.add(new Text(28, 34, title, TITLE_FONT, colors.text(), TextAnchor.START, true));
+      scene.add(new Text(28, 34, title, TITLE_FONT, TITLE_COLOR, TextAnchor.START, true));
     }
 
     if (!description.isBlank()) {
