@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test and render smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: diagrams
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Build and test
+        run: ./mvnw --batch-mode --no-transfer-progress verify
+
+      - name: Render default SVG
+        run: >-
+          ./mvnw --batch-mode --no-transfer-progress -q exec:java
+          -Dexec.args="examples/example.bck --theme default --output target/ci/default.svg"
+
+      - name: Render custom SVG and PNG
+        run: >-
+          ./mvnw --batch-mode --no-transfer-progress -q exec:java
+          -Dexec.args="examples/example.bck --theme custom --output target/ci/custom.svg --png"
+
+      - name: Verify rendered files
+        run: |
+          test -s target/ci/default.svg
+          test -s target/ci/custom.svg
+          test -s target/ci/custom.png
+          grep -q '<svg' target/ci/default.svg
+          grep -q '<svg' target/ci/custom.svg
+
+      - name: Upload test diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-diagnostics-${{ github.run_id }}
+          path: |
+            diagrams/target/surefire-reports/
+            diagrams/target/*.dump
+            diagrams/target/*.dumpstream
+          if-no-files-found: ignore
+          retention-days: 7
