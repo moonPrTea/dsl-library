@@ -9,6 +9,10 @@ import java.nio.file.Path;
 public final class PictureConverter {
   private static final double DEFAULT_SCALE = 3.0;
 
+  static {
+    System.setProperty("java.awt.headless", "true");
+  }
+
   private PictureConverter() {
   }
 

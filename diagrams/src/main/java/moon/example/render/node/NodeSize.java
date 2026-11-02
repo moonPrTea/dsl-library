@@ -1,4 +1,4 @@
-package moon.example.render;
+package moon.example.render.node;
 
 public record NodeSize(
         double width,

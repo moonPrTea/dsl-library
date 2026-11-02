@@ -1,4 +1,6 @@
-package moon.example.render;
+package moon.example.render.element;
+
+import moon.example.render.LucideIcon;
 
 public record Icon(
         double x,

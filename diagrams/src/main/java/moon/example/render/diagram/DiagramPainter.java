@@ -1,7 +1,10 @@
-package moon.example.render;
+package moon.example.render.diagram;
 
 import moon.example.model.DiagramEdge;
 import moon.example.model.DiagramNode;
+import moon.example.render.node.NodeSize;
+import moon.example.render.RenderScene;
+import moon.example.render.element.NodeBox;
 
 public interface DiagramPainter {
   NodeSize sizeOf(DiagramNode node);

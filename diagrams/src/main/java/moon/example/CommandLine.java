@@ -1,7 +1,7 @@
 package moon.example;
 
-import moon.example.render.DiagramTheme;
-import moon.example.render.DiagramThemes;
+import moon.example.render.diagram.DiagramTheme;
+import moon.example.render.diagram.DiagramThemes;
 
 import java.nio.file.Path;
 import java.util.Locale;
@@ -67,6 +67,7 @@ public record CommandLine(
             renderRequested, pngRequested, helpRequested);
   }
 
+  // TODO: add config package with default command line messages (all messages like this)
   public static String usage() {
     return """
             Usage: java moon.example.Main [input.bck] [options]

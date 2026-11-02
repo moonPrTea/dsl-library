@@ -1,4 +1,6 @@
-package moon.example.render;
+package moon.example.render.element;
+
+import moon.example.render.text.TextAnchor;
 
 public record Text(
         double x,

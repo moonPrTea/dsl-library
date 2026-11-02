@@ -4,7 +4,7 @@ diagram.setDescription(default::null);
 
 Terminator start = new Terminator();
 start.setTitle("Open login page");
-start.setBadgeLabel("Trigger");
+start.setBadgeLabel("Trigger1");
 start.setBadgeIcon("zap");
 start.setBadgeCategory("launch");
 
@@ -16,7 +16,7 @@ check.setTitle("Right credentials?");
 
 Process cancelAction = new Process();
 cancelAction.setTitle("Successful operation");
-cancelAction.setBadgeLabel("Done");
+cancelAction.setBadgeLabel("second conflict label");
 cancelAction.setBadgeIcon("circle_x");
 cancelAction.setBadgeCategory("finish");
 

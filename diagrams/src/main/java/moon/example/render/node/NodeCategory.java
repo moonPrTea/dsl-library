@@ -1,4 +1,6 @@
-package moon.example.render;
+package moon.example.render.node;
+
+import moon.example.render.LucideIcon;
 
 import java.util.Locale;
 

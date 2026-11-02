@@ -3,6 +3,16 @@ package moon.example.render;
 import moon.example.model.Diagram;
 import moon.example.model.DiagramEdge;
 import moon.example.model.DiagramNode;
+import moon.example.render.diagram.DiagramPainter;
+import moon.example.render.diagram.DiagramTheme;
+import moon.example.render.element.*;
+import moon.example.render.node.NodeCategory;
+import moon.example.render.node.NodeSize;
+import moon.example.render.element.Text;
+import moon.example.render.text.TextAnchor;
+import moon.example.render.text.TextLayout;
+import moon.example.render.theme.ThemeColors;
+import moon.example.render.theme.ThemeMetrics;
 
 import java.util.List;
 import java.util.Locale;

@@ -1,8 +1,12 @@
-package moon.example.render;
+package moon.example.render.diagram;
 
 import moon.example.model.Diagram;
 import moon.example.model.DiagramEdge;
 import moon.example.model.DiagramNode;
+import moon.example.render.*;
+import moon.example.render.element.DotGrid;
+import moon.example.render.element.LineGrid;
+import moon.example.render.node.NodeStyle;
 
 public final class DiagramRenderer {
   public RenderScene render(Diagram diagram, DiagramTheme theme) {
@@ -36,9 +40,9 @@ public final class DiagramRenderer {
     String color = theme.colors().grid();
 
     switch (theme.metrics().gridStyle()) {
-      case DOTS -> scene.add(new DotGrid(spacing, 1.1, color));
-      case LINES -> scene.add(new LineGrid(spacing, color));
-      case NONE -> { }
+      case GridStyle.DOTS -> scene.add(new DotGrid(spacing, 1.1, color));
+      case GridStyle.LINES -> scene.add(new LineGrid(spacing, color));
+      case GridStyle.NONE -> { }
     }
   }
 }

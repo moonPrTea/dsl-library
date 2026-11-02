@@ -91,6 +91,19 @@ public class AnalyzerTest {
   }
 
   @Test
+  void testAnalyzerShouldSuggestKnownBadgeIconForUnknownIcon() {
+    List<Problem> problems = collectProblems(DIAGRAM + """
+            Process cancelAction = new Process();
+            cancelAction.setBadgeIcon("circle_b");
+            diagram.addBlock(cancelAction);
+            """);
+
+    assertEquals(1, problems.size());
+    assertEquals(ProblemCode.UNKNOWN_BADGE_ICON, problems.getFirst().code());
+    assertEquals("did you mean 'circle_x'?", problems.getFirst().hint());
+  }
+
+  @Test
   void testAnalyzerShouldCreateEdgeFromSugarMethod() {
     Diagram diagram = analyze(DIAGRAM + """
             Process a = new Process();
@@ -118,6 +131,11 @@ public class AnalyzerTest {
   @Test
   void testAnalyzerShouldReportMissingDiagram() {
     assertSingleProblem("Process a = new Process();", ProblemCode.MISSING_DIAGRAM);
+  }
+
+  @Test
+  void testAnalyzerShouldReportMissingDiagramInEmptyFile() {
+    assertSingleProblem("", ProblemCode.MISSING_DIAGRAM);
   }
 
   @Test

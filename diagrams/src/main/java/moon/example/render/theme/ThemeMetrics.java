@@ -1,4 +1,6 @@
-package moon.example.render;
+package moon.example.render.theme;
+
+import moon.example.render.GridStyle;
 
 public record ThemeMetrics(
         double nodeWidth,

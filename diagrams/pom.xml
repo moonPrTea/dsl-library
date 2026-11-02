@@ -18,7 +18,7 @@
         <dependency>
             <groupId>io.brunoborges</groupId>
             <artifactId>jairosvg</artifactId>
-            <version>1.0.14</version>
+            <version>1.0.15</version>
         </dependency>
         <dependency>
             <groupId>in.virit</groupId>
@@ -33,6 +33,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <argLine>-Djava.awt.headless=true</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -46,7 +49,7 @@
     </build>
 
     <properties>
-        <maven.compiler.release>22</maven.compiler.release>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

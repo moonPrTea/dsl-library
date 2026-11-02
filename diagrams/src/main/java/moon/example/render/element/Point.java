@@ -1,4 +1,4 @@
-package moon.example.render;
+package moon.example.render.element;
 
 public record Point(
         double x,

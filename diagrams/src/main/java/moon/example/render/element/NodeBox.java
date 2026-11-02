@@ -1,4 +1,4 @@
-package moon.example.render;
+package moon.example.render.element;
 
 public record NodeBox(double x, double y, double width, double height, int level) {
   public double centerX() {

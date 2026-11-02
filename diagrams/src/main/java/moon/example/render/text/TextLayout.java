@@ -1,4 +1,4 @@
-package moon.example.render;
+package moon.example.render.text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public final class TextLayout {
 
       int split = remaining.lastIndexOf(' ', limit);
 
-      if (split < limit / 2) {
+      if (split <= 0) {
         split = limit;
       }
 

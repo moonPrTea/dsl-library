@@ -1,6 +1,5 @@
 package moon.example.analyzer;
 
-import moon.example.diagnostic.Problem;
 import moon.example.diagnostic.ProblemCode;
 import moon.example.diagnostic.ProblemCollector;
 import moon.example.model.Diagram;
@@ -28,16 +27,16 @@ public final class BlockDiagramRules {
         continue;
       }
 
-      boolean hasYes = hasOutgoingOfType(diagram, node, "Yes");
-      boolean hasNo = hasOutgoingOfType(diagram, node, "No");
+      boolean hasYesBranch = hasOutgoingOfType(diagram, node, "Yes");
+      boolean hasNoBranch = hasOutgoingOfType(diagram, node, "No");
 
-      if (!hasYes || !hasNo) {
-        String missing = !hasYes ? "Yes" : "No";
+      if (!hasYesBranch || !hasNoBranch) {
+        String missing = !hasYesBranch ? "Yes" : "No";
 
-        problemCollector.add(Problem.error(ProblemCode.DECISION_MISSING_BRANCH,
+        problemCollector.addError(ProblemCode.DECISION_MISSING_BRANCH,
                 node.getDeclarationRange(),
                 "decision '" + node.getName() + "' has no '" + missing + "' branch",
-                "add " + node.getName() + ".set" + missing + "(...)"));
+                "add " + node.getName() + ".set" + missing + "(...)");
       }
     }
   }
@@ -48,12 +47,12 @@ public final class BlockDiagramRules {
       boolean isBranch = relationName.equals("Yes") || relationName.equals("No");
 
       if (isBranch && !edge.getSource().getNodeType().name().equals("Decision")) {
-        problemCollector.add(Problem.error(ProblemCode.BRANCH_NOT_FROM_DECISION,
+        problemCollector.addError(ProblemCode.BRANCH_NOT_FROM_DECISION,
                 edge.getDeclarationRange(),
                 "'" + relationName + "' branch may start only from a Decision, but '"
                         + edge.getSource().getName() + "' is a "
                         + edge.getSource().getNodeType().name(),
-                "use setNext for non-decision nodes"));
+                "use setNext for non-decision nodes");
       }
     }
   }
@@ -64,13 +63,13 @@ public final class BlockDiagramRules {
         continue;
       }
 
-      int outgoingCount = diagram.getOutgoingEdges(node).size();
+      int outgoingEdgesCount = diagram.getOutgoingEdges(node).size();
 
-      if (outgoingCount > 1) {
-        problemCollector.add(Problem.error(ProblemCode.TERMINATOR_TOO_MANY_OUTGOING,
+      if (outgoingEdgesCount > 1) {
+        problemCollector.addError(ProblemCode.TERMINATOR_TOO_MANY_OUTGOING,
                 node.getDeclarationRange(),
-                "terminator '" + node.getName() + "' has " + outgoingCount
-                        + " outgoing edges, at most one is allowed"));
+                "terminator '" + node.getName() + "' has " + outgoingEdgesCount
+                        + " outgoing edges, at most one is allowed");
       }
     }
   }
@@ -84,10 +83,10 @@ public final class BlockDiagramRules {
             .anyMatch(node -> diagram.getIncomingEdges(node).isEmpty());
 
     if (!hasEntry) {
-      problemCollector.add(Problem.error(ProblemCode.NO_ENTRY_NODE,
-              diagram.getNodes().get(0).getDeclarationRange(),
+      problemCollector.addError(ProblemCode.NO_ENTRY_NODE,
+              diagram.getNodes().getFirst().getDeclarationRange(),
               "diagram has no entry node: every node has an incoming edge",
-              "a block diagram must have a node without incoming edges"));
+              "a block diagram must have a node without incoming edges");
     }
   }
 

@@ -6,7 +6,7 @@ project_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 if [ -n "${DIAGRAMS_JAVA_HOME:-}" ]; then
   project_java_home=$DIAGRAMS_JAVA_HOME
 elif [ -x /usr/libexec/java_home ]; then
-  project_java_home=$(/usr/libexec/java_home -v '22+' 2>/dev/null || true)
+  project_java_home=$(/usr/libexec/java_home -v '25+' 2>/dev/null || true)
 else
   project_java_home=${JAVA_HOME:-}
 fi
@@ -16,7 +16,7 @@ if [ -z "$project_java_home" ]; then
 fi
 
 if [ -z "$project_java_home" ] || [ ! -x "$project_java_home/bin/java" ]; then
-  echo "A JDK 22 or newer is required. Set DIAGRAMS_JAVA_HOME to its home directory." >&2
+  echo "A JDK 25 or newer is required. Set DIAGRAMS_JAVA_HOME to its home directory." >&2
   exit 1
 fi
 

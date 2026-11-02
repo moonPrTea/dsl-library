@@ -4,9 +4,20 @@ import moon.example.common.TextRange;
 import moon.example.model.Diagram;
 import moon.example.model.DiagramEdge;
 import moon.example.model.DiagramNode;
+import moon.example.render.diagram.DiagramLayout;
+import moon.example.render.diagram.DiagramRenderer;
+import moon.example.render.diagram.DiagramThemes;
+import moon.example.render.node.NodeCategory;
+import moon.example.render.node.NodeSize;
+import moon.example.render.text.TextLayout;
 import moon.example.specification.BlockDiagramSpecification;
+import moon.example.specification.DiagramLucideIcons;
 import moon.example.specification.DiagramSpecification;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,12 +31,18 @@ public class DiagramRendererTest {
     RenderScene scene = renderer.render(diagram, DiagramThemes.DEFAULT);
     String svg = new SvgDiagramExporter().export(scene);
     DiagramLayout layout = DiagramLayout.arrange(diagram, DiagramThemes.DEFAULT,
-            node -> new NodeSize(190, 78));
+            node -> new NodeSize(DiagramThemes.DEFAULT.metrics().nodeWidth(),
+                    DiagramThemes.DEFAULT.metrics().nodeHeight()));
 
     assertTrue(svg.contains("data-theme=\"default\""));
     assertTrue(svg.contains("<polygon points="), "decision must be a diamond");
     assertTrue(svg.contains("<polyline points="), "flowchart edges must be orthogonal");
     assertFalse(svg.contains("<pattern"));
+    assertTrue(svg.contains("<text x=\"28\" y=\"35\""));
+    assertTrue(svg.contains("text-anchor=\"start\""),
+            "default diagram heading must be left-aligned");
+    assertEquals(160, layout.boxOf(diagram.getNodes().getFirst()).width());
+    assertEquals(64, layout.boxOf(diagram.getNodes().getFirst()).height());
     assertTrue(layout.boxOf(diagram.getNodes().get(0)).y()
             < layout.boxOf(diagram.getNodes().get(1)).y());
   }
@@ -86,6 +103,21 @@ public class DiagramRendererTest {
     assertEquals(null, NodeCategory.find("nonsense"));
     assertEquals(LucideIcon.ZAP, LucideIcon.find("Zap"));
     assertEquals(null, LucideIcon.find("nonsense"));
+  }
+
+  @Test
+  void testSemanticAndRenderedLucideIconCatalogsShouldStayInSync() {
+    List<String> renderedIconNames = Arrays.stream(LucideIcon.values())
+            .map(icon -> icon.name().toLowerCase(Locale.ROOT))
+            .toList();
+
+    assertEquals(DiagramLucideIcons.names(), renderedIconNames);
+  }
+
+  @Test
+  void testFlowchartTextShouldWrapAtWordBoundaries() {
+    assertEquals(List.of("Right", "credentials?"),
+            TextLayout.wrap("Right credentials?", 124, 14, 3));
   }
 
   @Test

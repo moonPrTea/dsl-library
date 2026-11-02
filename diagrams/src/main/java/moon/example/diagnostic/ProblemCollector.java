@@ -2,6 +2,7 @@ package moon.example.diagnostic;
 
 import moon.example.common.FileInformation;
 import moon.example.common.TextPosition;
+import moon.example.common.TextRange;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,6 +26,14 @@ public final class ProblemCollector {
     }
 
     problems.add(problem);
+  }
+
+  public void addError(ProblemCode code, TextRange range, String message) {
+    add(Problem.error(code, range, message));
+  }
+
+  public void addError(ProblemCode code, TextRange range, String message, String hint) {
+    add(Problem.error(code, range, message, hint));
   }
 
   public boolean hasAnyErrors() {

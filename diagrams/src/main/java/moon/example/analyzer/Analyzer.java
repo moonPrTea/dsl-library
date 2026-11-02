@@ -18,6 +18,7 @@ import moon.example.model.Diagram;
 import moon.example.model.DiagramEdge;
 import moon.example.model.DiagramNode;
 import moon.example.specification.DiagramSpecification;
+import moon.example.specification.DiagramLucideIcons;
 import moon.example.specification.NodeType;
 import moon.example.specification.PropertyType;
 import moon.example.specification.RelationType;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,7 +69,7 @@ public final class Analyzer {
     if (!declaresAnyDiagram(program)) {
       TextRange range = program.statements().isEmpty()
               ? new TextRange(0, 0)
-              : program.statements().get(0).textRange();
+              : program.statements().getFirst().textRange();
 
       problemCollector.add(Problem.error(ProblemCode.MISSING_DIAGRAM, range,
               "no diagram is declared in the file",
@@ -124,6 +126,7 @@ public final class Analyzer {
     NodeType nodeType = specification.findNodeType(typeName);
     if (nodeType != null) {
       DiagramNode node = new DiagramNode(declaration.variableName(), nodeType, declaration.textRange());
+
       nodesByName.put(node.getName(), node);
       symbolTable.define(new Symbol(node.getName(), SymbolKind.NODE, typeName, declaration.textRange()));
       return;
@@ -302,7 +305,7 @@ public final class Analyzer {
       }
       case "setBadgeIcon" -> {
         String value = expectString(argument, propertyType);
-        if (value != null) {
+        if (value != null && validateBadgeIcon(value, argument.textRange())) {
           node.setBadgeIcon(value);
         }
       }
@@ -314,6 +317,22 @@ public final class Analyzer {
       }
       default -> throw new IllegalStateException("unhandled node property " + call.methodName());
     }
+  }
+
+  private boolean validateBadgeIcon(String value, TextRange range) {
+    if (DiagramLucideIcons.find(value) != null) {
+      return true;
+    }
+
+    String hint = NameSuggester.suggestionHint(
+            value.toLowerCase(Locale.ROOT), DiagramLucideIcons.names());
+    if (hint == null) {
+      hint = "available icons: " + String.join(", ", DiagramLucideIcons.names());
+    }
+
+    problemCollector.add(Problem.error(ProblemCode.UNKNOWN_BADGE_ICON, range,
+            "unknown badge icon '" + value + "'", hint));
+    return false;
   }
 
   private void processRelationCall(Call call, PendingRelation relation) {

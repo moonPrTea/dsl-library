@@ -2,6 +2,15 @@ package moon.example.render;
 
 import moon.example.model.DiagramEdge;
 import moon.example.model.DiagramNode;
+import moon.example.render.diagram.DiagramPainter;
+import moon.example.render.diagram.DiagramTheme;
+import moon.example.render.element.*;
+import moon.example.render.node.NodeSize;
+import moon.example.render.element.Text;
+import moon.example.render.text.TextAnchor;
+import moon.example.render.text.TextLayout;
+import moon.example.render.theme.ThemeColors;
+import moon.example.render.theme.ThemeMetrics;
 import moon.example.specification.Shape;
 
 import java.util.List;
@@ -32,15 +41,15 @@ public final class FlowchartPainter implements DiagramPainter {
 
   @Override
   public void paintHeading(RenderScene scene, String title, String description) {
-    double centerX = scene.getWidth() / 2.0;
+    double left = 28;
 
     if (!title.isBlank()) {
-      scene.add(new Text(centerX, 35, title, TITLE_FONT, colors.text(), TextAnchor.MIDDLE, true));
+      scene.add(new Text(left, 35, title, TITLE_FONT, colors.text(), TextAnchor.START, true));
     }
 
     if (!description.isBlank()) {
-      scene.add(new Text(centerX, 59, description, DESCRIPTION_FONT, colors.mutedText(),
-              TextAnchor.MIDDLE, false));
+      scene.add(new Text(left, 59, description, DESCRIPTION_FONT, colors.mutedText(),
+              TextAnchor.START, false));
     }
   }
 

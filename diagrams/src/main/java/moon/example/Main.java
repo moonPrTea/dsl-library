@@ -9,7 +9,7 @@ import moon.example.lexer.Token;
 import moon.example.model.Diagram;
 import moon.example.model.ModelPrinter;
 import moon.example.parser.Parser;
-import moon.example.render.DiagramRenderer;
+import moon.example.render.diagram.DiagramRenderer;
 import moon.example.render.PictureConverter;
 import moon.example.render.RenderScene;
 import moon.example.render.SvgDiagramExporter;

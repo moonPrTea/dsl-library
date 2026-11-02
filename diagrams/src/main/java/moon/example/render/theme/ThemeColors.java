@@ -1,4 +1,4 @@
-package moon.example.render;
+package moon.example.render.theme;
 
 public record ThemeColors(
         String canvas,

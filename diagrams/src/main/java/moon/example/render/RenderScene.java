@@ -1,5 +1,8 @@
 package moon.example.render;
 
+import moon.example.render.diagram.DiagramTheme;
+import moon.example.render.element.Element;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

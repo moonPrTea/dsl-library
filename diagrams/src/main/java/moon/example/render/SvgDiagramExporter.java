@@ -1,5 +1,8 @@
 package moon.example.render;
 
+import moon.example.render.element.*;
+import moon.example.render.element.Text;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -9,8 +12,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public final class SvgDiagramExporter {
-  private static final String FONT_FAMILY =
-          "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+  private static final String FONT_FAMILY = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
   private static final String GRID_PATTERN_ID = "grid";
 
   public void write(RenderScene scene, Path path) throws IOException {

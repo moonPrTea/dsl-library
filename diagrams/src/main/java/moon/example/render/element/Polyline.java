@@ -1,14 +1,14 @@
-package moon.example.render;
+package moon.example.render.element;
 
 import java.util.List;
 
-public record Polygon(
+public record Polyline(
         List<Point> points,
-        String fill,
         String stroke,
-        double strokeWidth
+        double strokeWidth,
+        boolean dashed
 ) implements Element {
-  public Polygon {
+  public Polyline {
     points = List.copyOf(points);
   }
 }
